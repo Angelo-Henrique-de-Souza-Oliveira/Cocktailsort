@@ -1,0 +1,205 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX 100000
+
+//Função cocktail sort Crescente
+void cocktailSortCrescente(int data[], int n) { //função recebe uma lista e o tamanho
+    int i, j, c;
+    do {
+        // Ordenando a partir do ultimo indice, do final para o inicio do vetor
+        for (i = n - 1, c = 0; i >= c; i--) { 
+        /*aqui o loop começa do ultimo elemento e verifica se ele 
+        é menorr que o elemento anterior a ele, se for ocorre a troca*/
+            if (data[i] < data[i - 1]) {
+                int temp = data[i];
+                data[i] = data[i - 1];
+                data[i - 1] = temp;
+            }
+        }
+        c++;
+
+        // Ordenando a partir do primeiro indice, do inicio para o final
+        for (i = 0; i < n - 1; i++) {
+        	/*aqui o loop começa do primeiro elemento e verifica se ele 
+            é maior que o elemento sucessor a ele, se for ocorre a troca*/
+            if (data[i] > data[i + 1]) {
+                int temp = data[i];
+                data[i] = data[i + 1];
+                data[i + 1] = temp;
+            }
+        }
+        n--;
+
+    } while (n != 0 && c != 0);
+
+}
+
+
+void cocktailSortDecrescente(int data[], int n) {
+    int trocas = 1; // Variável para verificar se houve trocas
+    int inicio = 0; // Início da seção não ordenada
+    int fim = n - 1; // Final da seção não ordenada
+
+    while (trocas) {
+        trocas = 0;
+
+        // Ordena do início para o fim, em ordem decrescente
+        for (int i = inicio; i < fim; i++) {
+            if (data[i] < data[i + 1]) {
+                int temp = data[i];
+                data[i] = data[i + 1];
+                data[i + 1] = temp;
+                trocas = 1;
+            }
+        }
+
+        // Se não houve trocas, o array está ordenado
+        if (!trocas)
+            break;
+
+        // Reduz o limite do final
+        fim--;
+
+        // Ordena do final para o início, em ordem decrescente
+        for (int i = fim - 1; i >= inicio; i--) {
+            if (data[i] < data[i + 1]) {
+                int temp = data[i];
+                data[i] = data[i + 1];
+                data[i + 1] = temp;
+                trocas = 1;
+            }
+        }
+
+        // Aumenta o limite do início
+        inicio++;
+    }
+}
+
+
+void reverseSort(int data[], int start, int end) {
+	int i,j;
+    for (i = start, j = end; i < j; i++, j--) {
+        int temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
+    }
+}
+
+void metadeDecrescenteCrescente(int data[], int n) {
+    // Ordena a primeira metade em ordem decrescente
+    cocktailSortDecrescente(data, n / 2);
+
+    // Ordena a segunda metade em ordem crescente
+    cocktailSortCrescente(data + n / 2, n - n / 2);
+}
+
+void metadeCrescenteDecrescente(int data[], int n) {
+    // Ordena a primeira metade em ordem crescente
+    cocktailSortCrescente(data, n / 2);
+
+    // Ordena a segunda metade em ordem crescente e depois inverte para ficar decrescente
+    cocktailSortCrescente(data + n / 2, n - n / 2);
+    reverseSort(data, n / 2, n - 1);
+}
+
+int main() {
+    int data[MAX];
+    int n = MAX;
+	
+	srand(time(0));
+	
+	int i;
+	printf("Números Desordenados:\n");
+    for (i = 0; i < MAX; i++) {
+        data[i] = rand() % 100; // Números aleatórios entre 0 e 99
+        printf("%d\t", data[i]);
+    }
+    printf("\n");
+    printf("\n");
+    
+	// Registra o tempo antes da ordenação
+    clock_t start = clock();
+	//chama a função
+    cocktailSortDecrescente(data, n);
+
+    // Registra o tempo após a ordenação
+    clock_t end = clock();
+
+    // Calcula o tempo de ordenação em segundos
+    double time_spent1 = (double)(end - start) / CLOCKS_PER_SEC;
+
+ // Saída
+    printf("Os elementos ordenados decrescentemente:\n");
+    for (i = 0; i < MAX; i++) {
+        printf("%d\t", data[i]);
+    }
+    printf("\n");
+	// Exibe o tempo gasto para a ordenação
+    printf("Tempo de ordenação: %f segundos\n", time_spent1);
+    
+	printf("\n");
+	printf("\n");
+// Registra o tempo antes da ordenação
+    start = clock();
+	//chama a função
+    cocktailSortCrescente(data, n);
+
+    // Registra o tempo após a ordenação
+    end = clock();
+
+    // Calcula o tempo de ordenação em segundos
+    double time_spent2 = (double)(end - start) / CLOCKS_PER_SEC;
+
+    // Saída
+    printf("Os elementos ordenados Crescentemente:\n");
+    for (i = 0; i < MAX; i++) {
+        printf("%d\t", data[i]);
+    }
+    printf("\n");
+	// Exibe o tempo gasto para a ordenação
+    printf("Tempo de ordenação: %f segundos\n", time_spent2);
+    
+    printf("\n");
+    printf("\n");
+    //chama a função
+    start = clock();
+    metadeCrescenteDecrescente(data, n);
+    end = clock();
+    
+    double time_spent3 = (double)(end - start) / CLOCKS_PER_SEC;
+    // Saída
+    printf("Primeira metade do vetor ordenado crescentemente e segunda decrescentemente:\n");
+    for (i = 0; i < MAX; i++) {
+        printf("%d\t", data[i]);
+    }
+    printf("\n");
+	// Exibe o tempo gasto para a ordenação
+    printf("Tempo de ordenação: %f segundos\n", time_spent3);
+    
+    printf("\n");
+    printf("\n");
+    //chama a função
+    start = clock();
+    metadeDecrescenteCrescente(data, n);
+    end = clock();
+    
+    double time_spent4 = (double)(end - start) / CLOCKS_PER_SEC;
+    // Saída
+    printf("Primeira metade do vetor ordenado decrescentemente e segunda crescentemente:\n");
+    for (i = 0; i < MAX; i++) {
+        printf("%d\t", data[i]);
+    }
+    printf("\n");
+    printf("Tempo de ordenação: %f segundos\n", time_spent4);
+    printf("\n");
+    printf("\n");
+    printf("\n");
+	// Exibe o tempo gasto para a ordenação
+	printf("Tempo de ordenação: %f segundos\n", time_spent1);
+	printf("Tempo de ordenação: %f segundos\n", time_spent2);
+	printf("Tempo de ordenação: %f segundos\n", time_spent3);
+    printf("Tempo de ordenação: %f segundos\n", time_spent4);
+   	
+    return 0;
+}
